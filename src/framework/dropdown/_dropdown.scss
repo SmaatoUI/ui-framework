@@ -126,3 +126,18 @@
   top: calc(100% - 1px); /* 1 */
   white-space: nowrap;
 }
+
+.dropdownSearch {
+  font-size: 12px;
+  font-style: italic;
+  height: 26px;
+  line-height: 18px;
+  padding: 4px 8px;
+
+  .icon {
+    display: inline-block;
+    height: 10px;
+    margin-right: 4px;
+    width: 10px;
+  }
+}

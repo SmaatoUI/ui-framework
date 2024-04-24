@@ -85,4 +85,6 @@ Dropdown.defaultProps = Object.assign({}, BaseDropdown.defaultProps, {
   labelFocusClasses: 'is-dropdown-label-focus',
   optionListClasses: 'dropdownOptionList',
   optionType: DropdownOption,
+  dropdownSearchClasses: 'dropdownSearch',
+  searchPrompt: 'Start typing to search...',
 });
