@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { HollowButton } from '../button';
+import HollowButton from '../button/HollowButton.jsx';
 
 const ChangeLogLink = props => (
   <div className="changeLogLink">

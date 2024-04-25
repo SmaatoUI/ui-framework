@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import GlossaryProvider from './GlossaryProvider';
-import GlossaryTooltip from './GlossaryTooltip';
+import GlossaryProvider from './GlossaryProvider.jsx';
+import GlossaryTooltip from './GlossaryTooltip.jsx';
 
 class GlossaryItem extends Component {
   constructor(props) {
