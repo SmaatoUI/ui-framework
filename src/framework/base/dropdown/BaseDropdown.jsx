@@ -256,7 +256,10 @@ export default class BaseDropdown extends Component {
     }
 
     const searchBox = this.props.searchFilter ? (
-      <div className={this.props.dropdownSearchClasses}>
+      <div
+        onMouseDown={this.onMouseDownLabel}
+        className={this.props.dropdownSearchClasses}
+      >
         <span className="icon icon-magnifier" />
         {this.state.inputValue || this.props.searchPrompt}
       </div>
