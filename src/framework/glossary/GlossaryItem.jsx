@@ -1,14 +1,18 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import GlossaryProvider from './GlossaryProvider';
-import GlossaryTooltip from './GlossaryTooltip';
+import GlossaryProvider from './GlossaryProvider.jsx';
+import GlossaryTooltip from './GlossaryTooltip.jsx';
 
 class GlossaryItem extends Component {
-  state = {
-    glossaryItem: null,
-  };
+  constructor(props) {
+    super(props);
 
-  onGlossaryLoad = glossary => this.setState({ glossaryItem: glossary[this.props.id] });
+    this.state = {
+      glossaryItem: null,
+    };
+
+    this.onGlossaryLoad = this.onGlossaryLoad.bind(this);
+  }
 
   componentDidMount() {
     GlossaryProvider.subscribe(this.onGlossaryLoad);
@@ -23,6 +27,10 @@ class GlossaryItem extends Component {
 
   componentWillUnmount() {
     GlossaryProvider.unsubscribe(this.onGlossaryLoad);
+  }
+
+  onGlossaryLoad(glossary) {
+    this.setState({ glossaryItem: glossary[this.props.id] });
   }
 
   render() {
@@ -42,7 +50,7 @@ class GlossaryItem extends Component {
         </GlossaryTooltip>
       );
     }
-  
+
     return null;
   }
 }

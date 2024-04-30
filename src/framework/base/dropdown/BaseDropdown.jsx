@@ -27,12 +27,15 @@ export default class BaseDropdown extends Component {
       hasFocus: false,
       isOpen: false,
       focusedOptionIndex: -1,
+      inputValue: '',
+      filteredOptions: this.props.options,
     };
 
     this.onBlur = this.onBlur.bind(this);
     this.onFocus = this.onFocus.bind(this);
     this.onClickLabel = this.onClickLabel.bind(this);
     this.onMouseDownLabel = this.onMouseDownLabel.bind(this);
+    this.onChange = this.onChange.bind(this);
     this.onKeyDown = this.onKeyDown.bind(this);
     this.onSelectOption = this.onSelectOption.bind(this);
     this.onMouseOverOption = this.onMouseOverOption.bind(this);
@@ -50,6 +53,13 @@ export default class BaseDropdown extends Component {
     if (!prevState.isOpen && this.state.isOpen) {
       this.chooseOpeningDirection();
     }
+
+    if (prevProps.options !== this.props.options) {
+      // eslint-disable-next-line react/no-did-update-set-state
+      this.setState({
+        filteredOptions: this.filterOptionsList(this.state.inputValue),
+      });
+    }
   }
 
   componentWillUnmount() {
@@ -61,6 +71,8 @@ export default class BaseDropdown extends Component {
       hasFocus: false,
       isOpen: false,
       focusedOptionIndex: -1,
+      inputValue: '',
+      filteredOptions: this.props.options,
     });
   }
 
@@ -94,18 +106,19 @@ export default class BaseDropdown extends Component {
     });
   }
 
+  onChange(event) {
+    const { value } = event.target;
+    this.setState({
+      focusedOptionIndex: -1,
+      inputValue: value,
+      filteredOptions: this.filterOptionsList(value),
+    });
+  }
+
   onKeyDown(event) {
-    // Let tab continue to cycle focus.
-    if (event.keyCode === 9) {
-      return;
+    if ([13, 27, 38, 40].includes(event.keyCode)) {
+      event.preventDefault();
     }
-
-    // Let special keyboard commands have normal effects.
-    if (event.metaKey || event.altKey || event.ctrlKey) {
-      return;
-    }
-
-    event.preventDefault();
 
     switch (event.keyCode) {
       // Enter
@@ -113,7 +126,7 @@ export default class BaseDropdown extends Component {
         // Select the focused option if the dropdown is open.
         if (this.state.isOpen) {
           this.onSelectOption(
-            this.props.options[this.state.focusedOptionIndex]
+            this.state.filteredOptions[this.state.focusedOptionIndex]
           );
         }
         break;
@@ -190,7 +203,7 @@ export default class BaseDropdown extends Component {
 
   focusNextOption() {
     const focusedOptionIndex =
-      this.state.focusedOptionIndex === this.props.options.length - 1 ?
+      this.state.focusedOptionIndex === this.state.filteredOptions.length - 1 ?
       0 :
       this.state.focusedOptionIndex + 1;
 
@@ -202,12 +215,20 @@ export default class BaseDropdown extends Component {
   focusPreviousOption() {
     const focusedOptionIndex =
       this.state.focusedOptionIndex === 0 ?
-      this.props.options.length - 1 :
+      this.state.filteredOptions.length - 1 :
       this.state.focusedOptionIndex - 1;
 
     this.setState({
       focusedOptionIndex,
     });
+  }
+
+  filterOptionsList(searchTerm) {
+    if (this.props.searchFilter) {
+      return this.props.searchFilter(this.props.options, searchTerm);
+    }
+
+    return this.props.options;
   }
 
   render() {
@@ -234,10 +255,20 @@ export default class BaseDropdown extends Component {
       );
     }
 
+    const searchBox = this.props.searchFilter ? (
+      <div
+        onMouseDown={this.onMouseDownLabel}
+        className={this.props.dropdownSearchClasses}
+      >
+        <span className="icon icon-magnifier" />
+        {this.state.inputValue || this.props.searchPrompt}
+      </div>
+    ) : null;
+
     let optionList;
 
     if (this.state.isOpen) {
-      const options = this.props.options.map((option, index) => (
+      const options = this.state.filteredOptions.map((option, index) => (
         React.createElement(
           this.props.optionType,
           {
@@ -259,6 +290,7 @@ export default class BaseDropdown extends Component {
           ref="optionList"
           className={this.props.optionListClasses}
         >
+          {searchBox}
           {options}
         </div>
       );
@@ -276,6 +308,8 @@ export default class BaseDropdown extends Component {
           onBlur={this.onBlur}
           onFocus={this.onFocus}
           onKeyDown={this.onKeyDown}
+          onChange={this.onChange}
+          value={this.state.inputValue}
         />
         <div
           className={labelClasses}
@@ -305,6 +339,9 @@ BaseDropdown.propTypes = {
   labelProvider: PropTypes.func.isRequired,
   optionLabelProvider: PropTypes.func.isRequired,
   isReadonly: PropTypes.bool,
+  searchFilter: PropTypes.func,
+  searchPrompt: PropTypes.string,
+  dropdownSearchClasses: PropTypes.string.isRequired,
 };
 
 BaseDropdown.defaultProps = {

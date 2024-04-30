@@ -4,13 +4,16 @@ import React, {
   Component,
 } from 'react';
 import PropTypes from 'prop-types';
-import Column from '../columnLayout/Column';
-import ColumnLayout from '../columnLayout/ColumnLayout';
-import Modal, { ModalBody, ModalFooter, ModalHeader } from '../modal/Modal';
-import { PrimaryButton } from '../button';
-import Progress from '../progress/Progress';
-import Text from '../text/Text';
-import VerticalLayout from '../verticalLayout/VerticalLayout';
+import Column from '../columnLayout/Column.jsx';
+import ColumnLayout from '../columnLayout/ColumnLayout.jsx';
+import Modal from '../modal/Modal.jsx';
+import ModalBody from '../modal/ModalBody.jsx';
+import ModalFooter from '../modal/footer/ModalFooter.jsx';
+import ModalHeader from '../modal/header/ModalHeader.jsx';
+import PrimaryButton from '../button/PrimaryButton.jsx';
+import Progress from '../progress/Progress.jsx';
+import Text from '../text/Text.jsx';
+import VerticalLayout from '../verticalLayout/VerticalLayout.jsx';
 
 export default class ChangeLogModal extends Component {
   renderChanges() {

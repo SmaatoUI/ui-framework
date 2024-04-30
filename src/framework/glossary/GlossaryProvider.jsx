@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -13,23 +14,7 @@ window.__GLOSSARY_DATA = {};
 window.__GLOSSARY_STATUS = GLOSSARY_STATUS.UNLOADED;
 
 class GlossaryProvider extends React.Component {
-  componentDidMount() {
-    const fetchGlossary = async () => {
-      window.__GLOSSARY_STATUS = GLOSSARY_STATUS.LOADING;
-
-      const data = await this.props.queryFn();
-
-      window.__GLOSSARY_STATUS = GLOSSARY_STATUS.LOADED;
-      window.__GLOSSARY_DATA = data;
-
-      const event = new CustomEvent(GLOSSARY_LOADED_EVENT, { detail: window.__GLOSSARY_DATA });
-      document.dispatchEvent(event);
-    };
-
-    fetchGlossary().catch(() => window.__GLOSSARY_STATUS = GLOSSARY_STATUS.FAILED);
-  }
-
-  static subscribe = (listener) => {
+  static subscribe(listener) {
     if (!listener) {
       throw new Error('Listener function not passed to subscribe.');
     }
@@ -41,12 +26,32 @@ class GlossaryProvider extends React.Component {
     document.addEventListener(GLOSSARY_LOADED_EVENT, listener);
   }
 
-  static unsubscribe = (listener) => {
+  static unsubscribe(listener) {
     if (!listener) {
       throw new Error('Listener function not passed to unsubscribe.');
     }
 
     document.removeEventListener(GLOSSARY_LOADED_EVENT, listener);
+  }
+
+  componentDidMount() {
+    const fetchGlossary = async () => {
+      window.__GLOSSARY_STATUS = GLOSSARY_STATUS.LOADING;
+
+      const data = await this.props.queryFn();
+
+      window.__GLOSSARY_STATUS = GLOSSARY_STATUS.LOADED;
+      window.__GLOSSARY_DATA = data;
+
+      const event = new CustomEvent(GLOSSARY_LOADED_EVENT, {
+        detail: window.__GLOSSARY_DATA,
+      });
+      document.dispatchEvent(event);
+    };
+
+    fetchGlossary().catch(
+      () => { window.__GLOSSARY_STATUS = GLOSSARY_STATUS.FAILED; }
+    );
   }
 
   render() {
